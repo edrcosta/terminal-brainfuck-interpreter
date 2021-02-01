@@ -1,27 +1,25 @@
-import { iMemorySize, iOpcodeExecutable } from './interfaces';
+import { iMemorySize, iOperation } from './interfaces';
 export declare class Computer {
-    clockCounter: number;
     regs: {
         x: number;
         y: number;
     };
-    private memory;
-    private codeStack;
-    private loopClock;
+    memory: any;
+    codeStack: any;
+    counters: {
+        stack: number;
+        program: number;
+        clock: number;
+        executed: number;
+    };
+    debugger: boolean;
     constructor(memoryX: number, memoryY: number);
     resetMemory(memory: iMemorySize): void;
-    userInput: (code: any) => void;
-    computerDebug(): void;
-    /**
-     * Apply operation into memory and registers
-     *
-     * @param operation
-     */
-    executeInstruction: (opCode: number, operation: iOpcodeExecutable) => iOpcodeExecutable | undefined;
-    loopCounter: any;
+    userInput: (code: any) => any;
+    executeInstruction: (opCode: number) => iOperation | undefined;
     /**
      * get a instruction thread and executes
      */
-    fetchExecute(): Promise<false | undefined>;
-    start(): void;
+    fetchExecute(): Promise<void>;
+    start: () => number;
 }

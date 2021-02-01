@@ -12,6 +12,7 @@ rl.on("close", function () {
     console.log("\nTurning of computer instance, bye");
     process.exit(0);
 });
-instance.userInput('>+++[>+<-]');
+instance.userInput('+++>>>');
+instance.userInput('<<<-');
 instance.start();
 //# sourceMappingURL=start.js.map

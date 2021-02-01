@@ -1,6 +1,5 @@
-import { iOpcodeExecutable } from './interfaces';
+import { iOperation, iInstructionTable } from './interfaces';
 export declare class InterpreterLang {
-    static loop: boolean;
-    static instructionTable: any;
-    static getExec: (OPCODE: any) => iOpcodeExecutable;
+    static instructionTable: iInstructionTable<Function>;
+    static getExec: (OPCODE: any) => iOperation;
 }

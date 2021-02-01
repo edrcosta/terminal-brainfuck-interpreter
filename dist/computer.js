@@ -12,24 +12,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Computer = void 0;
 const interpreter_1 = require("./interpreter");
 const chalk = require("chalk");
+const debugger_1 = require("./debugger");
 class Computer {
     constructor(memoryX, memoryY) {
-        this.clockCounter = 0;
         this.regs = { x: 0, y: 0 };
         this.memory = [];
         this.codeStack = [];
-        this.userInput = (code) => {
-            this.codeStack.push(Buffer.from(code));
+        this.counters = {
+            stack: 0,
+            program: 0,
+            clock: 0,
+            executed: 0
         };
-        /**
-         * Apply operation into memory and registers
-         *
-         * @param operation
-         */
-        this.executeInstruction = (opCode, operation) => {
-            if (!operation) {
-                console.log('unknow', opCode, opCode.toString(16), opCode.toString(2));
-            }
+        this.debugger = true;
+        this.userInput = (code) => this.codeStack.push(Buffer.from(code));
+        this.executeInstruction = (opCode) => {
+            const operation = interpreter_1.InterpreterLang.getExec(opCode);
+            if (!operation)
+                console.log(chalk.red('unknow'), opCode, opCode.toString(16), opCode.toString(2));
             if (operation.regs) {
                 this.regs.x += operation.regs.x ? operation.regs.x : 0;
                 this.regs.y += operation.regs.y ? operation.regs.y : 0;
@@ -39,8 +39,11 @@ class Computer {
             }
             return operation;
         };
-        this.loopCounter = 0;
+        this.start = () => setInterval(() => {
+            this.fetchExecute();
+        }, 1000);
         this.resetMemory({ x: memoryX, y: memoryY });
+        debugger_1.Debugger.debugg(this);
     }
     resetMemory(memory) {
         for (let x = 0; x < memory.x; x++) {
@@ -49,51 +52,23 @@ class Computer {
                 this.memory[x][y] = 0;
         }
     }
-    computerDebug() {
-        console.log('-------------------------------', '\n Registers\n\n', this.regs);
-        console.log('-------------------------------', '\n Memory\n');
-        this.memory.forEach((row, y) => {
-            row = row.map((cell, x) => {
-                if (this.regs.x === x && this.regs.y === y) {
-                    return chalk.red(cell);
-                }
-                return cell;
-            });
-            console.log(row.join(','));
-        });
-    }
     /**
      * get a instruction thread and executes
      */
     fetchExecute() {
         return __awaiter(this, void 0, void 0, function* () {
-            const nextThread = this.codeStack.pop();
-            if (!nextThread)
-                return false;
-            let start = false;
-            for (let i = 0; i < nextThread.length; i++) {
-                const opCode = nextThread[i];
-                const response = this.executeInstruction(opCode, interpreter_1.InterpreterLang.getExec(opCode));
-                if (response.loop && start === false) {
-                    start = i;
-                }
-                if (!response.loop && start !== false) {
-                    if (this.memory[this.regs.y][this.regs.x] > 0) {
-                        i = start;
-                    }
+            const thread = this.codeStack[this.counters.stack];
+            this.executeInstruction(thread[this.counters.program]);
+            this.counters.program++;
+            if (this.counters.program === thread.length) {
+                this.counters.program = 0;
+                this.counters.stack++;
+                if (this.counters.stack === this.codeStack.length) {
+                    this.counters.stack = 0;
                 }
             }
-            // nextThread.forEach((opCode: number, i: number) => {
-            // })
-            console.clear();
-            this.computerDebug();
+            debugger_1.Debugger.debugg(this);
         });
-    }
-    start() {
-        this.loopClock = setInterval(() => {
-            this.fetchExecute();
-            this.clockCounter++;
-        }, 3000);
     }
 }
 exports.Computer = Computer;

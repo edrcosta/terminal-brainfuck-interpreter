@@ -2,11 +2,15 @@ export interface iMemorySize {
     x: number;
     y: number;
 }
-export interface iOpcodeExecutable {
+export interface iOperation {
     regs?: {
-        x: number;
-        y: number;
+        x?: number;
+        y?: number;
     };
     memory?: number;
     loop?: boolean;
+    endLoop?: boolean;
+}
+export interface iInstructionTable<iOperation> {
+    [key: number]: iOperation;
 }
