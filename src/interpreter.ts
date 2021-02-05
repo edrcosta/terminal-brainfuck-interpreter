@@ -9,7 +9,7 @@ export class InterpreterLang
         0x2b: ()  => { return  { memory: +1 } }, //+
         0x2d: ()  => { return  { memory: -1 } }, //-
         0x5b: ()  => { return  { loop: true } }, // [
-        0x5d: ()  => { return  { loop: false } }, // ]
+        0x5d: ()  => { return  { endLoop: true } }, // ]
     }
 
     static getExec  = (OPCODE: any) : iOperation => InterpreterLang.instructionTable[OPCODE]()

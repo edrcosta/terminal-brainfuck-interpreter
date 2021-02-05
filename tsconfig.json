@@ -58,7 +58,7 @@
     },
     "include": [
       "src/*"
-, "src/computers/computer.ts"    ],
+    ],
     "exclude": [
       "tests/*"
     ]

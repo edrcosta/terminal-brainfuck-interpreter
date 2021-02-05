@@ -1,25 +1,26 @@
 import { InterpreterLang } from './interpreter'
 import { iMemorySize, iOperation } from './interfaces'
-import * as chalk from 'chalk'
 import { Debugger } from './debugger'
+
+import * as chalk from 'chalk'
 
 export class Computer
 {
-    public regs = { x: 0, y: 0 }   
+    public regs = { x: 0, y: 0 }
     public memory : any = []
-    public codeStack: any = []
+    public codeMemory: any = []
+    public clockCounter = 0
+    public clockMulti = 0
     public counters = {
         stack: 0,
-        program: 0,
-        clock: 0,
-        executed: 0
+        program:{ x: 0, y: 0},
+        clock: 0
     }
 
     public debugger = true
 
     constructor(memoryX: number, memoryY: number){
         this.resetMemory({ x: memoryX, y: memoryY})  
-        Debugger.debugg(this)
     }
     
     resetMemory(memory: iMemorySize){
@@ -29,49 +30,57 @@ export class Computer
         }
     }
 
-    userInput = (code: any) => this.codeStack.push(Buffer.from(code))
+    userInput = (code: any) => {
+        this.codeMemory.push(code.split('').map((instruction: string) => Buffer.from(instruction)))
+    }
   
-    executeInstruction = (opCode: number) : iOperation | undefined => {
-        const operation = InterpreterLang.getExec(opCode)
+    applyInstruction = (opCode: Buffer) : iOperation | undefined => {
 
-        if(!operation) console.log(chalk.red('unknow'), opCode, opCode.toString(16), opCode.toString(2))
+        const operation = InterpreterLang.getExec(Uint8Array.from(opCode)[0])
+
+        if(!operation) console.log(chalk.red('unknow'), opCode, opCode)
         
         if(operation.regs){
             this.regs.x += operation.regs.x ? operation.regs.x : 0
             this.regs.y += operation.regs.y ? operation.regs.y : 0
         }
 
-        if(operation.memory){
-            this.memory[this.regs.y][this.regs.x] += operation.memory
+        if(operation.loop){
+            console.log('start')
         }
 
+        if(operation.memory) this.memory[this.regs.y][this.regs.x] += operation.memory
+
+        this.increaseInstructionCounters()
         return operation
     }
-
-    /**
-     * get a instruction thread and executes 
-     */
-    async fetchExecute(){   
-        
-        const thread = this.codeStack[this.counters.stack]
-
-        this.executeInstruction(thread[this.counters.program])
-        
-        this.counters.program++
-        if(this.counters.program  === thread.length ){
-            this.counters.program = 0
-            this.counters.stack++
-            if(this.counters.stack === this.codeStack.length){
-                this.counters.stack = 0
-            }
+    
+    increaseInstructionCounters(){
+        this.counters.program.x++
+        if(this.counters.program.x === this.codeMemory[this.counters.program.y].length){
+            this.counters.program.x = 0
+            this.counters.program.y++
         }
-
-        Debugger.debugg(this)
     }
 
-    start = () => setInterval(() => {
+    async fetchExecute(){   
+        
+        if(typeof this.codeMemory[this.counters.program.y] === 'undefined') return console.log('stack-end')
+        
+        const nextInstruction = this.codeMemory[this.counters.program.y][this.counters.program.x]
 
+        if(!nextInstruction) return false
 
-        this.fetchExecute()
-    }, 1000)
+        if(nextInstruction) this.applyInstruction(nextInstruction)
+
+        Debugger.debugg(this, 4)
+
+    }
+
+    // every clock pulse do:
+    clock = () => { 
+        this.fetchExecute() 
+        this.clockCounter++
+    }
+    start = () => setInterval(this.clock, 1000)
 }

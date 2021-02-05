@@ -15,7 +15,6 @@ rl.on("close", function() {
     process.exit(0)
 })
 
-instance.userInput('+++>>>')
 
-instance.userInput('<<<-')
+instance.userInput('+++[>+<-]')
 instance.start()
