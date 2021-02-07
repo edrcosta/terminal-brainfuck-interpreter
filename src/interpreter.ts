@@ -13,5 +13,5 @@ export class InterpreterLang
         0x2e: { print: true }, //.
     }
 
-    static getExec  = (OPCODE: any) : iOperation => InterpreterLang.instructionTable[OPCODE]
+    static getExec  = (OPCODE: number) : iOperation => InterpreterLang.instructionTable[OPCODE]
 }

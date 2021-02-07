@@ -6,13 +6,13 @@ import * as chalk from 'chalk'
 
 export class Computer
 {
-    public memory : Array<Array<number>> = [] // Computer memory (RAM)
-    public code: Array<Buffer> = [] // Computer code memory (code stack)
-    public instructionCounter = 0 // Stores how much instructions the CPU executed
-    public clockSpeed  = 500
-    public debugger = true
+     memory : Array<Array<number>> = [] // Computer memory (RAM) ex:[[0x5e, 0x5d, 0x3e]]
+     code: Array<Array<Buffer>> = [] // Computer code memory (code stack)
+     instructionCounter = 0 // Stores how much instructions the CPU executed
+     clockSpeed  = 500
+     debugger = true
 
-    public regs = { 
+     regs = { 
         x: 0, // Memory address X
         y: 0, // Memory address Y
         loop: -1, // Loop index register
@@ -39,7 +39,9 @@ export class Computer
     /**
      * Insert code into code stack
      */
-    userInput = (code: any) => (this.code.push(code.split('').map((instruction: string) => Buffer.from(instruction))))
+    userInput = (code: any) => (
+        this.code.push(code.split('').map((instruction: string) => Buffer.from(instruction)))
+    )
 
     /**
      * Get opcode operand and if exists execute it by applying changes into registers and memory 
@@ -47,32 +49,41 @@ export class Computer
     applyInstruction = (opCode: Buffer) : iOperation | undefined => {
 
         const operation = InterpreterLang.getExec(Uint8Array.from(opCode)[0])
-
+        
         if(!operation) console.log(chalk.red('unknow'), opCode, opCode)
         
+        // Apply register changes
         if(operation.regs){
             this.regs.x += operation.regs.x ? operation.regs.x : 0
             this.regs.y += operation.regs.y ? operation.regs.y : 0
         }
 
+        // Apply memory changes
         if(operation.memory) this.memory[this.regs.y][this.regs.x] += operation.memory
 
+        // loop start
         if(operation.loop && this.regs.loop === -1) this.regs.loop = this.regs.program.x+1
 
+        // loop end 
         if(operation.endLoop && this.regs.loop !== -1){
             if(this.memory[this.regs.y][this.regs.x] === 0){
-                this.regs.loop = -1
+                this.regs.loop = -1 // stop loop
             }else{
-                this.regs.program.x = this.regs.loop
+                this.regs.program.x = this.regs.loop // start over again
             }
         }else{
+            // regular program registers increment
             this.regs.program.x++
             if(this.regs.program.x === this.code[this.regs.program.y].length){
                 this.regs.program.x = 0
                 this.regs.program.y++
             }
         }
-        
+
+        Debugger.debugg(this)
+
+        if(operation?.print) console.log(chalk.green('OUTPUT:'), this.memory[this.regs.y][this.regs.y])
+
         return operation
     }
     
@@ -80,22 +91,11 @@ export class Computer
      * execute the current instruction in code memory addressed by regs.program.y and regs.program.x registers
      */
     async fetchExecute(){        
-        if(typeof this.code[this.regs.program.y] === 'undefined') return false
-        
-        const instruction : any = this.code[this.regs.program.y][this.regs.program.x]
+        const instruction : Buffer = this.code[this.regs.program.y][this.regs.program.x]
 
-        if(!instruction) return false
+        if(typeof instruction === 'undefined') return false
 
-        if(instruction) {
-            const operation = this.applyInstruction(instruction)
-
-            Debugger.debugg(this)
-
-            if(operation?.print) console.log(chalk.green('OUTPUT:'), this.memory[this.regs.y][this.regs.y])
-
-        }else {
-            Debugger.debugg(this)
-        }
+        return instruction ? this.applyInstruction(instruction) : Debugger.debugg(this)
     }
 
     /**

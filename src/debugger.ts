@@ -18,7 +18,7 @@ export class Debugger{
 
         computer.code.forEach((thread : Buffer, i : number) => {
             let code = thread.join('')
-            let index: any = i
+            let index: string = `${i}`
             if(computer.regs.program.y === i) {
                 code = chalk.blue(code.substr(0, computer.regs.program.x)) + chalk.green(code.substr(computer.regs.program.x))
                 index = chalk.green(`${i}`)
@@ -29,12 +29,12 @@ export class Debugger{
         })
 
         console.log('\n', chalk.yellow('MEMORY'), '\n')
-        computer.memory.forEach((row: any, y: number) => {
-            row = row.map((cell: any, x: number) => {
-                if(computer.regs.x === x && computer.regs.y === y) return chalk.red(cell)
-                return cell
-            })
-            console.log(row.join(','))
+        computer.memory.forEach((row: Array<number>, y: number) => {
+            console.log(
+                row.map((cell: number, x: number) : string => {
+                    return computer.regs.x === x && computer.regs.y === y ?  chalk.red(cell): `${cell}`
+                }).join(',')
+            )
         })
 
         console.log('~/ $')
