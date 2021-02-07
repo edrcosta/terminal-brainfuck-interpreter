@@ -5,6 +5,7 @@ export class Debugger{
     static count = 0
 
     static debugg(computer: Computer){
+        if(!computer.debugger) return false
         console.clear()
         console.log(chalk.grey('____________________________________________________________\n'))
         console.log(chalk.blue('BRAINFUCK_COMPUTER 1.0'))

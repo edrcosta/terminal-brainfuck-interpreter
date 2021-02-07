@@ -9,7 +9,7 @@ export class Computer
     public memory : Array<Array<number>> = [] // Computer memory (RAM)
     public code: Array<Buffer> = [] // Computer code memory (code stack)
     public instructionCounter = 0 // Stores how much instructions the CPU executed
-    public clockSpeed  = 100
+    public clockSpeed  = 500
     public debugger = true
 
     public regs = { 
@@ -86,9 +86,16 @@ export class Computer
 
         if(!instruction) return false
 
-        if(instruction) this.applyInstruction(instruction)
+        if(instruction) {
+            const operation = this.applyInstruction(instruction)
 
-        if(this.debugger) Debugger.debugg(this)
+            Debugger.debugg(this)
+
+            if(operation?.print) console.log(chalk.green('OUTPUT:'), this.memory[this.regs.y][this.regs.y])
+
+        }else {
+            Debugger.debugg(this)
+        }
     }
 
     /**
