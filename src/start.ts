@@ -16,5 +16,7 @@ rl.on("close", function() {
 })
 
 
-instance.userInput('+++[>+<-]')
+instance.userInput('+++[>+<-]>>>++')
+instance.userInput('+++')
+
 instance.start()
