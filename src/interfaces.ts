@@ -1,6 +1,6 @@
 export interface iMemorySize { x: number, y: number }
 
-export interface iOperation{
+export interface iOperation {
     regs?: {
         x?: number,
         y?: number
@@ -8,6 +8,7 @@ export interface iOperation{
     memory?: number,
     loop?: boolean,
     endLoop?: boolean
+    print?: boolean
 }
 
 export interface iInstructionTable<iOperation> {

@@ -3,29 +3,32 @@ import { iMemorySize, iOperation } from './interfaces'
 import { Debugger } from './debugger'
 
 import * as chalk from 'chalk'
-import { timingSafeEqual } from 'crypto'
 
 export class Computer
 {
-
-    public memory : any = []
-    public codeMemory: any = []
-    public clockCounter = 0
-    public clockMulti = 0
+    public memory : Array<Array<number>> = [] // Computer memory (RAM)
+    public code: Array<Buffer> = [] // Computer code memory (code stack)
+    public instructionCounter = 0 // Stores how much instructions the CPU executed
+    public clockSpeed  = 100
     public debugger = true
 
     public regs = { 
-        x: 0, 
-        y: 0,
-        loop: -1,
-        stack: 0,
-        program:{ x: 0, y: 0},
+        x: 0, // Memory address X
+        y: 0, // Memory address Y
+        loop: -1, // Loop index register
+        program:{ 
+            x: 0, // Code memory address X 
+            y: 0 // Code memory address Y 
+        },
     }
 
     constructor(memoryX: number, memoryY: number){
-        this.reset({ x: memoryX, y: memoryY})  
+        this.reset({ x: memoryX, y: memoryY})
     }
     
+    /**
+     * create a array of arrays with an x y size
+     */
     reset(memory: iMemorySize){
         for (let x = 0; x < memory.x; x++) {
             this.memory.push([])
@@ -33,18 +36,19 @@ export class Computer
         }
     }
 
-    userInput = (code: any) => {
-        this.codeMemory.push(code.split('').map((instruction: string) => Buffer.from(instruction)))
-    }
-  
+    /**
+     * Insert code into code stack
+     */
+    userInput = (code: any) => (this.code.push(code.split('').map((instruction: string) => Buffer.from(instruction))))
+
+    /**
+     * Get opcode operand and if exists execute it by applying changes into registers and memory 
+     */
     applyInstruction = (opCode: Buffer) : iOperation | undefined => {
 
         const operation = InterpreterLang.getExec(Uint8Array.from(opCode)[0])
 
-        if(!operation) {
-            console.log(chalk.red('unknow'), opCode, opCode)
-            return operation
-        }
+        if(!operation) console.log(chalk.red('unknow'), opCode, opCode)
         
         if(operation.regs){
             this.regs.x += operation.regs.x ? operation.regs.x : 0
@@ -63,7 +67,7 @@ export class Computer
             }
         }else{
             this.regs.program.x++
-            if(this.regs.program.x === this.codeMemory[this.regs.program.y].length){
+            if(this.regs.program.x === this.code[this.regs.program.y].length){
                 this.regs.program.x = 0
                 this.regs.program.y++
             }
@@ -72,23 +76,31 @@ export class Computer
         return operation
     }
     
-    async fetchExecute(){   
+    /**
+     * execute the current instruction in code memory addressed by regs.program.y and regs.program.x registers
+     */
+    async fetchExecute(){        
+        if(typeof this.code[this.regs.program.y] === 'undefined') return false
         
-        if(typeof this.codeMemory[this.regs.program.y] === 'undefined') return false
-        
-        const nextInstruction = this.codeMemory[this.regs.program.y][this.regs.program.x]
+        const instruction : any = this.code[this.regs.program.y][this.regs.program.x]
 
-        if(!nextInstruction) return false
+        if(!instruction) return false
 
-        if(nextInstruction) this.applyInstruction(nextInstruction)
+        if(instruction) this.applyInstruction(instruction)
 
-        Debugger.debugg(this)
+        if(this.debugger) Debugger.debugg(this)
     }
 
+    /**
+     * called every clock pulse
+     */
     clock = () => { 
         this.fetchExecute() 
-        this.clockCounter++
+        this.instructionCounter++
     }
     
-    start = () => setInterval(this.clock, 100)
+    /**
+     * Initialize the computer clock loop
+     */
+    start = () => setInterval(this.clock, this.clockSpeed)
 }

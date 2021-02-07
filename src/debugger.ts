@@ -15,7 +15,7 @@ export class Debugger{
         console.log(chalk.blue('REGISTERS'), '\n\n', computer.regs, '\n')
         console.log(chalk.green('CODE MEMORY'), '\n')
 
-        computer.codeMemory.forEach((thread : Buffer, i : number) => {
+        computer.code.forEach((thread : Buffer, i : number) => {
             let code = thread.join('')
             let index: any = i
             if(computer.regs.program.y === i) {
