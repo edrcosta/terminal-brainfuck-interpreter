@@ -12,7 +12,7 @@ export class Computer
      clockSpeed  = 500
      debugger = true
 
-     regs = { 
+    regs = { 
         x: 0, // Memory address X
         y: 0, // Memory address Y
         loop: -1, // Loop index register
@@ -49,7 +49,7 @@ export class Computer
     applyInstruction = (opCode: Buffer) : iOperation | undefined => {
 
         const operation = InterpreterLang.getExec(Uint8Array.from(opCode)[0])
-        
+
         if(!operation) console.log(chalk.red('unknow'), opCode, opCode)
         
         // Apply register changes
@@ -90,7 +90,7 @@ export class Computer
     /**
      * execute the current instruction in code memory addressed by regs.program.y and regs.program.x registers
      */
-    async fetchExecute(){        
+    async fetchExecute(){
         const instruction : Buffer = this.code[this.regs.program.y][this.regs.program.x]
 
         if(typeof instruction === 'undefined') return false

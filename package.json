@@ -14,10 +14,9 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^14.14.22",
-    "assemblyscript": "^0.18.3"
+    "standard": "^16.0.3"
   },
   "dependencies": {
-    "@assemblyscript/loader": "^0.18.3",
     "chalk": "^4.1.0"
   }
 }
