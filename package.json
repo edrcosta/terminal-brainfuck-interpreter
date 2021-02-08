@@ -13,8 +13,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^14.14.22",
-    "standard": "^16.0.3"
+    "@types/node": "^14.14.22"
   },
   "dependencies": {
     "chalk": "^4.1.0"
