@@ -90,6 +90,8 @@ export class Computer {
      * execute the current instruction in code memory addressed by regs.program.y and regs.program.x registers
      */
     async fetchExecute() {
+        if (typeof this.code[this.regs.program.y][this.regs.program.x] === 'undefined') return false
+
         const instruction: Buffer = this.code[this.regs.program.y][this.regs.program.x]
 
         if (typeof instruction === 'undefined') return false
