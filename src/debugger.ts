@@ -6,7 +6,7 @@ export class Debugger {
 
     static header(computer: Computer) {
         console.log(chalk.grey('____________________________________________________________\n'))
-        console.log(chalk.blue('BRAINFUCK_COMPUTER 1.0'))
+        console.log(chalk.blue('BRAINFUCK_COMPUTER 1.0'), computer.halt ? chalk.red('CPU HALTED') : '', computer.bussy ? chalk.green('RUNNING INSTRUCTION') : '')
         console.log(chalk.grey('____________________________________________________________\n'))
     }
 
@@ -18,15 +18,12 @@ export class Debugger {
     static codeMemory(computer: Computer) {
         computer.code.forEach((thread: Array<Buffer>, i: number) => {
             let code = thread.join('')
-            let index: string = `${i}`
-
             if (computer.regs.program.y === i) {
                 code = chalk.blue(code.substr(0, computer.regs.program.x)) + chalk.green(code.substr(computer.regs.program.x))
-                index = chalk.green(`${i}`)
             } else {
                 code = chalk.grey(code)
             }
-            console.log(index, code, chalk.red(computer.regs.program.x))
+            console.log(i,':', code, i === computer.regs.program.y ? chalk.red(computer.regs.program.x) : '')
         })
     }
 

@@ -7,5 +7,9 @@ import { commandLineInterface } from './terminal'
     commandLineInterface(instance.userInput)
 
     instance.userInput('+++.')
+    instance.userInput('+++.')
+    instance.userInput('+++.')
+    instance.userInput('+++.')
+    instance.userInput('+++.')
     instance.start()
 })()

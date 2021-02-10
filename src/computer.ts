@@ -10,6 +10,8 @@ export class Computer {
     instructionCounter = 0 // Stores how much instructions the CPU executed
     clockSpeed = 500
     debugger = true
+    halt = false // Interrupt CPU
+    bussy = false // Operation been executed
 
     regs = {
         x: 0, // Memory address X
@@ -86,29 +88,42 @@ export class Computer {
         return operation
     }
 
-    /**
-     * execute the current instruction in code memory addressed by regs.program.y and regs.program.x registers
-     */
-    async fetchExecute() {
+    fetchNextInstruction = () => {
+        if(typeof this.code[this.regs.program.y] === 'undefined') return false
         if (typeof this.code[this.regs.program.y][this.regs.program.x] === 'undefined') return false
 
         const instruction: Buffer = this.code[this.regs.program.y][this.regs.program.x]
 
         if (typeof instruction === 'undefined') return false
 
-        return instruction ? this.applyInstruction(instruction) : Debugger.debugg(this)
+        return instruction
     }
+
+    /**
+     * execute the current instruction in code memory addressed by regs.program.y and regs.program.x registers
+     */
+    fetchExecute = () => new Promise(async (resolve, reject) => {
+        const instruction = this.fetchNextInstruction()
+
+        //execute
+        instruction ? await this.applyInstruction(instruction) : Debugger.debugg(this)
+
+        return resolve(instruction)
+    })
 
     /**
      * called every clock pulse
      */
     clock = () => {
-        this.fetchExecute()
+        this.bussy = true
+        this.fetchExecute().then(() => { this.bussy = false })
         this.instructionCounter++
     }
 
     /**
      * Initialize the computer clock loop
      */
-    start = () => setInterval(this.clock, this.clockSpeed)
+    start = () => setInterval(() => {
+        if(!this.bussy) this.clock()
+    }, this.clockSpeed)
 }
