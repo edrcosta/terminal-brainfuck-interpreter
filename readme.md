@@ -4,6 +4,22 @@ A simple typescritp interpreter
 
 ![Running interpreter](https://github.com/edrcosta/terminal-brainfuck-interpreter/blob/master/print.png?raw=true)
 
+#### Dependencies
+
+- Node 10+
+- NPM
+
+#### Running 
+
+1. clone this repo
+2. in terminal go into the root folder
+3. run `npm install``
+4. npm start
+
+*development*
+
+1. run `tsc -w` (to build with wacth)
+
 #### Instruction set
 
 1. `>` Increment memory pointer 
