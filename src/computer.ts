@@ -9,6 +9,7 @@ export class Computer {
     code: Array<Array<Buffer>> = [] // Computer code memory (code stack)
     instructionCounter = 0 // Stores how much instructions the CPU executed
     clockSpeed = 500
+    
     debugger = true
     halt = false // Interrupt CPU
     bussy = false // Operation been executed
@@ -105,10 +106,7 @@ export class Computer {
     fetchExecute = () => new Promise(async (resolve, reject) => {
         const instruction = this.fetchNextInstruction()
 
-        //execute
-        instruction ? await this.applyInstruction(instruction) : Debugger.debugg(this)
-
-        return resolve(instruction)
+        return resolve(instruction ? await this.applyInstruction(instruction) : false)
     })
 
     /**

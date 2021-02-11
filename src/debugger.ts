@@ -40,9 +40,7 @@ export class Debugger {
 
     static debugg(computer: Computer) {
         if (!computer.debugger) return false
-
         console.clear()
-
         Debugger.header(computer)
         Debugger.registers(computer)
         Debugger.codeMemory(computer)

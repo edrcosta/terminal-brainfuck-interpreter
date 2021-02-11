@@ -24,7 +24,6 @@ Brainfuck Emulator
 #### @todo 
 
 - -255 to 255 value limits 
-- error handdler done right 
 - unit tests 
 - input instruction
 - ascci code output

@@ -2,6 +2,7 @@ import { iOperation, iInstructionTable } from './interfaces'
 
 export class InterpreterLang {
     static instructionTable: iInstructionTable<iOperation> = {
+        // default Brainfuck instruction set
         0x3e: { regs: { x: +1 } }, //>
         0x3c: { regs: { x: -1 } }, //<
         0x5e: { regs: { y: +1 } }, //^
