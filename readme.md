@@ -1,6 +1,8 @@
-### At brain emulator 
+### Brainfuck interpreter
 
-Brainfuck Emulator 
+A simple typescritp interpreter 
+
+![Running interpreter](https://github.com/edrcosta/terminal-brainfuck-interpreter/blob/master/print.png?raw=true)
 
 #### Instruction set
 
