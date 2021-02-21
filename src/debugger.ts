@@ -1,7 +1,8 @@
 import * as chalk from 'chalk'
 import { Computer } from './computer'
 
-export class Debugger {
+export class Debugger 
+{
     static count = 0
 
     static header(computer: Computer) {
