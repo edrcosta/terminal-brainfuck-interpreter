@@ -11,7 +11,7 @@ export class Computer
     instructionCounter = 0 // Stores how much instructions the CPU executed
     clockSpeed = 500
     
-    debugger = true
+    debugger = true // Enable console debugger output
     halt = false // Interrupt CPU
     bussy = false // Operation been executed
 
@@ -47,6 +47,32 @@ export class Computer
     )
 
     /**
+     * deal with start and end loop operands
+     * 
+     * @param operation 
+     */
+    loopOperations = (operation: iOperation) => {
+        // loop start
+        operation.loop && this.regs.loop === -1 ? this.regs.loop = this.regs.program.x + 1 : false
+
+        // loop end 
+        const endLoop = operation.endLoop && this.regs.loop !== -1
+
+        if (endLoop && this.memory[this.regs.y][this.regs.x] === 0) {
+            this.regs.loop = -1 // stop loop
+        } else if(endLoop) {
+            this.regs.program.x = this.regs.loop // start over again
+        } else {
+            // loop iteration increment
+            this.regs.program.x++
+            if (this.regs.program.x === this.code[this.regs.program.y].length) {
+                this.regs.program.x = 0
+                this.regs.program.y++
+            }
+        }
+    }
+        
+    /**
      * Get opcode operand and if exists execute it by applying changes into registers and memory 
      */
     applyInstruction = (opCode: Buffer): Promise<iOperation> | undefined => new Promise((resolve, reject) => {
@@ -55,31 +81,12 @@ export class Computer
 
         !operation ? console.log(chalk.red('unknow'), opCode, opCode) : false
 
-        // Apply register changes
+        /**
+         * CPU modifiers applyed by operand result
+         */
         operation.regs?.x ? (this.regs.x += operation.regs.x ? operation.regs.x : 0): false
         operation.regs?.y ? (this.regs.y += operation.regs.y ? operation.regs.y : 0): false
-        
-        // Apply memory changes
         operation.memory ? this.memory[this.regs.y][this.regs.x] += operation.memory : false
-        
-        // loop start
-        operation.loop && this.regs.loop === -1 ? this.regs.loop = this.regs.program.x + 1 : false
-
-        // loop end 
-        if (operation.endLoop && this.regs.loop !== -1) {
-            if (this.memory[this.regs.y][this.regs.x] === 0) {
-                this.regs.loop = -1 // stop loop
-            } else {
-                this.regs.program.x = this.regs.loop // start over again
-            }
-        } else {
-            // regular program registers increment
-            this.regs.program.x++
-            if (this.regs.program.x === this.code[this.regs.program.y].length) {
-                this.regs.program.x = 0
-                this.regs.program.y++
-            }
-        }
 
         Debugger.debugg(this)
 
