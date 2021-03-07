@@ -48,11 +48,11 @@ export class Computer
     )
 
     /**
-     * deal with start and end loop operands
+     * deal with program counters and loops 
      * 
      * @param operation 
      */
-    loopOperations = (operation: iOperation) => {
+    iteratePointers = (operation: iOperation) => {
         // loop start
         operation.loop && this.regs.loop === -1 ? this.regs.loop = this.regs.program.x + 1 : false
 
@@ -89,6 +89,8 @@ export class Computer
         operation.regs?.y ? (this.regs.y += operation.regs.y ? operation.regs.y : 0): false
         operation.memory ? this.memory[this.regs.y][this.regs.x] += operation.memory : false
 
+        this.iteratePointers(operation)
+        
         Debugger.debugg(this)
 
         if (operation?.print) console.log(chalk.green('OUTPUT:'), this.memory[this.regs.y][this.regs.y])
