@@ -9,7 +9,7 @@ export class Computer
     memory: Array<Array<number>> = [] // Computer memory (RAM) ex:[[0x5e, 0x5d, 0x3e]]
     code: Array<Array<Buffer>> = [] // Computer code memory (code stack)
     instructionCounter = 0 // Stores how much instructions the CPU executed
-    clockSpeed = 500
+    clockSpeed = 100
     
     debugger = true // Enable console debugger output
     halt = false // Interrupt CPU
@@ -27,6 +27,7 @@ export class Computer
 
     constructor(memoryX: number, memoryY: number) {
         this.reset({ x: memoryX, y: memoryY })
+        Debugger.debugg(this)
     }
 
     /**
