@@ -9,7 +9,7 @@ export class Computer
     memory: Array<Array<number>> = [] // Computer memory (RAM) ex:[[0x5e, 0x5d, 0x3e]]
     code: Array<Array<Buffer>> = [] // Computer code memory (code stack)
     instructionCounter = 0 // Stores how much instructions the CPU executed
-    clockSpeed = 100
+    clockSpeed = 10
     
     debugger = true // Enable console debugger output
     halt = false // Interrupt CPU
@@ -93,8 +93,10 @@ export class Computer
         
         Debugger.debugg(this)
 
-        if (operation?.print) console.log(chalk.green('OUTPUT:'), this.memory[this.regs.y][this.regs.y])
-
+        if(operation.print){
+            console.log(String.fromCharCode(this.memory[this.regs.y][this.regs.y]))
+        }
+        
         resolve(operation)
     })
 
