@@ -1,8 +1,11 @@
-import { Computer } from './computer'
+/**
+ * AT Brain Brainfuck interpreter
+ */
+import { AtBrainInterpreter } from './interpreter'
 import { commandLineInterface } from './terminal'
 
 (() => {
-    const instance = new Computer(5, 64)
+    const instance = new AtBrainInterpreter(5, 64)
 
     commandLineInterface(instance.userInput)
     instance.start()

@@ -1,14 +1,14 @@
 import * as chalk from 'chalk'
-import { Computer } from './computer'
+import { Computer } from './interpreter'
 
 export class Debugger 
 {
     static count = 0
 
     static header(computer: Computer) {
-        console.log(chalk.grey('____________________________________________________________\n'))
-        console.log(chalk.blue('BRAINFUCK_COMPUTER 1.0'), computer.halt ? chalk.red('CPU HALTED') : '', computer.bussy ? chalk.green('RUNNING INSTRUCTION') : '')
-        console.log(chalk.grey('____________________________________________________________\n'))
+        
+        console.log(chalk.bgGreen.whiteBright('AT Brain'), chalk.bgBlue.whiteBright('1.0.0'), '\n')
+        
     }
 
     static registers(computer: Computer) {
