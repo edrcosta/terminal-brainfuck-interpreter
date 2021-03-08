@@ -1,22 +1,20 @@
 import * as chalk from 'chalk'
-import { Computer } from './interpreter'
+import { AtBrainInterpreter } from './interpreter'
 
 export class Debugger 
 {
     static count = 0
 
-    static header(computer: Computer) {
-        
+    static header(computer: AtBrainInterpreter) {
         console.log(chalk.bgGreen.whiteBright('AT Brain'), chalk.bgBlue.whiteBright('1.0.0'), '\n')
-        
     }
 
-    static registers(computer: Computer) {
+    static registers(computer: AtBrainInterpreter) {
         console.log(chalk.blue('REGISTERS'), '\n\n', computer.regs, '\n')
         console.log(chalk.green('CODE MEMORY'), '\n')
     }
 
-    static codeMemory(computer: Computer) {
+    static codeMemory(computer: AtBrainInterpreter) {
         computer.code.forEach((thread: Array<Buffer>, i: number) => {
             let code = thread.join('')
             if (computer.regs.program.y === i) {
@@ -28,7 +26,7 @@ export class Debugger
         })
     }
 
-    static memory(computer: Computer) {
+    static memory(computer: AtBrainInterpreter) {
         console.log('\n', chalk.yellow('MEMORY'), '\n')
         computer.memory.forEach((row: Array<number>, y: number) => {
             console.log(
@@ -39,7 +37,7 @@ export class Debugger
         })
     }
 
-    static debugg(computer: Computer) {
+    static debugg(computer: AtBrainInterpreter) {
         if (!computer.debugger) return false
         console.clear()
         Debugger.header(computer)
