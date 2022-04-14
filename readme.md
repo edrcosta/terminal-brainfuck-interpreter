@@ -7,9 +7,9 @@ A simple typescritp interpreter made for fun
 
 #### Explaining this
 
-this is an "just in time interpreter" 
+this is an terminal application 
 
-this mean that users can input commands and wait into the result that will be executed after an list of other comands been executed
+ that users can input commands and wait into the result that will be executed after an list of other comands been executed
 the comands are inputed into an stack of comands... 
 
 the computer will then get one by one and "get an interpretation" that i call "operand" or "operation" that is just an data representation with what the computer must do for example the opcode 0x3e that means + or "plus 1 in the current memory location" this is just a 
