@@ -1,50 +1,38 @@
-import * as chalk from 'chalk'
-import { AtBrainInterpreter } from './interpreter'
+import { AtBrainInterpreter } from "./interpreter"
 
-export class Debugger 
-{
-    static count = 0
-
-    static header(computer: AtBrainInterpreter) {
-        console.log(chalk.bgGreen.whiteBright('AT Brain'), chalk.bgBlue.whiteBright('1.0.0'), '\n')
+export class Debugger{
+    static welcomeMessage(memorySizeInBytes: number){
+        console.log('Welcome to this Brainfuck interpreter, press enter to start')
+        console.log(`memory initialized with: ${memorySizeInBytes} bytes`)
     }
 
-    static registers(computer: AtBrainInterpreter) {
-        console.log(chalk.blue('REGISTERS'), '\n\n', computer.regs, '\n')
-        console.log(chalk.green('CODE MEMORY'), '\n')
+    static currentState(computerInstance: AtBrainInterpreter){
+        const {memorySizeInBytes, memory, stringOuput, registers: {x, y}} = computerInstance
+
+        Debugger.welcomeMessage(memorySizeInBytes)
+        Debugger.showMemory(memory, x, y)
+        Debugger.showTextOutput(stringOuput)
     }
 
-    static codeMemory(computer: AtBrainInterpreter) {
-        computer.code.forEach((thread: Array<Buffer>, i: number) => {
-            let code = thread.join('')
-            if (computer.regs.program.y === i) {
-                code = chalk.blue(code.substr(0, computer.regs.program.x)) + chalk.green(code.substr(computer.regs.program.x))
-            } else {
-                code = chalk.grey(code)
-            }
-            console.log(i,':', code, i === computer.regs.program.y ? chalk.red(computer.regs.program.x) : '')
-        })
+    static clear = console.clear
+
+    static error = console.error
+
+    static showMemory(memory: ArrayBuffer[], x:number, y: number){
+        console.log("\nMemory Content:");
+
+        const debugLineOfMemory = (memoryBlock: ArrayBuffer, yy: number) => {
+            const indicator =  y === yy ? '->' : '  '
+            const memory = Array.from(new Uint8Array(memoryBlock))
+            const debugLine = memory.map((char, xx) => x === xx && y === yy ? '\x1b[31m' + char + '\x1b[0m' : char)
+
+            console.log(yy, indicator, debugLine.join(','))
+        }
+
+        memory.forEach(debugLineOfMemory)
     }
 
-    static memory(computer: AtBrainInterpreter) {
-        console.log('\n', chalk.yellow('MEMORY'), '\n')
-        computer.memory.forEach((row: Array<number>, y: number) => {
-            console.log(
-                row.map((cell: number, x: number): string => {
-                    return computer.regs.x === x && computer.regs.y === y ? chalk.red(cell) : `${cell}`
-                }).join(',')
-            )
-        })
-    }
-
-    static debugg(computer: AtBrainInterpreter) {
-        if (!computer.debugger) return false
-        console.clear()
-        Debugger.header(computer)
-        Debugger.registers(computer)
-        Debugger.codeMemory(computer)
-        Debugger.memory(computer)
-
-        console.log('~/ $')
+    static showTextOutput(text: Buffer){
+        console.log(text.toString('utf-8'))
     }
 }
