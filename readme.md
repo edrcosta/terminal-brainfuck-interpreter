@@ -2,8 +2,6 @@
 
 A simple typescritp interpreter made for fun
 
-![Running interpreter](https://github.com/edrcosta/terminal-brainfuck-interpreter/blob/master/print.png?raw=true)
-
 #### Explaining this
 
 This is my own interpreter made to learning how to build a interpreter initialy for brainfuck and now for what im calling AtBrain 
